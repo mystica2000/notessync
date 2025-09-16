@@ -1,0 +1,49 @@
+<app-header [showBack]="true"></app-header>
+
+<main>
+    <form #contentForm="ngForm" (ngSubmit)="onSubmit(contentForm)" class="form-container">
+
+        <div class="form-section">
+            <label for="content">Content</label>
+            <textarea id="content" name="content" [ngModel]="content()" (ngModelChange)="updateContent($event)"
+                [maxLength]="700" [minlength]="8" required placeholder="Enter your content here..."
+                #contentField="ngModel"></textarea>
+
+
+            <div class="field-footer">
+                @if(contentField.invalid && contentField.touched) {
+                <div class="validation-messages">
+                    @if (contentField.hasError('required')) {
+                    <small class="error">
+                        Content is required
+                    </small>
+                    }
+                </div>
+                } @else {
+                <div></div>
+                }
+
+                <div class="character-count">
+                    <span [class.warning]="isNearLimit()">
+                        {{content().length}} / 700
+                    </span>
+
+                    @if (getRemainingChars() > 0) {
+                    <span>
+                        ({{getRemainingChars()}} remaining)
+                    </span>
+                    }
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" [disabled]="contentForm.invalid || disableButton()">Add</button>
+            <button (click)="onBack()" [disabled]="disableButton">Cancel</button>
+        </div>
+    </form>
+
+
+</main>

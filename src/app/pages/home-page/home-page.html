@@ -1,0 +1,11 @@
+<app-header></app-header>
+
+<main>
+    <app-controls></app-controls>
+    <app-search-bar (resultsEmitter)="handleSearchResults($event)"></app-search-bar>
+    @if (showSearch()) {
+    <app-app-search-content [result]="opt"></app-app-search-content>
+    } @else {
+    <app-table-content></app-table-content>
+    }
+</main>

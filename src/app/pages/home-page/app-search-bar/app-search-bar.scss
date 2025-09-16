@@ -1,0 +1,28 @@
+.section {
+  padding: 1em;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1em;
+}
+
+.search-input {
+  border: 2px solid oklch(0.922 0 0);
+  border-radius: 15px;
+  padding: 1em;
+
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.btn {
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  border-radius: 15px;
+
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}

@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* keeps inner content from getting clipped */
+}
+
+app-table-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}

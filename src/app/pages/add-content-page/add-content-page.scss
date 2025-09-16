@@ -1,0 +1,60 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* keeps inner content from getting clipped */
+}
+
+button {
+  height: 5em;
+  font-size: 1.1em;
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section {
+  flex: 0.9;
+  display: grid;
+  grid-template-rows: 0fr 1fr 0.5fr;
+}
+
+.btn-group {
+  gap: 1em;
+  height: 5em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+textarea {
+  resize: none;
+  font-size: 1.2em;
+  padding: 0.5em;
+  font-family: system-ui;
+  flex: 6;
+  height: 100%;
+}
+
+label {
+  margin-bottom: 1em;
+}
+
+.field-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1em;
+  flex: 1;
+}
+
+small {
+  font-size: 1em;
+  color: red;
+}
+
+.container {
+  padding-top: 1em;
+  height: 100%;
+}

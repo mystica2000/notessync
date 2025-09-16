@@ -1,0 +1,20 @@
+<section>
+    <h2>Search Results</h2>
+
+    @if (result.length >0) {
+    <ul>
+        @for (item of result; track item.id)
+        { <li class="result">
+            <div class="ellipsis-content">
+                {{item.content}}
+            </div>
+            <div class="score">
+                {{item.distance}}
+            </div>
+        </li>
+        }
+    </ul>
+    } @else {
+    <p>No results found</p>
+    }
+</section>

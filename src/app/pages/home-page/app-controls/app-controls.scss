@@ -1,0 +1,22 @@
+.btn {
+  flex: 1;
+  background: #007bff;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 1em;
+  border-radius: 15px;
+  border-color: transparent;
+  color: white;
+}
+
+section {
+  display: flex;
+  flex-direction: row;
+  /* width: 100%; */
+  flex-direction: row;
+  gap: 1em;
+  margin-inline: 2em;
+  padding-top: 1em;
+}

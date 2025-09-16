@@ -1,0 +1,23 @@
+<section>
+    <h2>All Content</h2>
+    <ul>
+        @for (item of (opt | async); track item.id)
+        { <li>
+            <div class="ellipsis-content">
+                {{item.content}}
+            </div>
+        </li>
+        }
+    </ul>
+
+    @if(hasMore()) {
+    <app-loading #sentinelElement [fullPageLoader]="false"></app-loading>
+    }
+
+    @if((opt | async)?.length === 0 && !hasMore()) {
+    <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <p>No content added yet. Click "Add Content" to get started!</p>
+    </div>
+    }
+</section>

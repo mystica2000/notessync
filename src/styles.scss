@@ -1,1 +1,36 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+app-root {
+  display: flex;
+  min-height: 100vh; /* page fills the viewport */
+  flex-direction: column;
+}
+
+main,
+section {
+  padding-inline: 1em;
+}
+
+main {
+  padding-block: 1em;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

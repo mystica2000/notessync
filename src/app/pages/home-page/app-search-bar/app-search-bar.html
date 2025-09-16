@@ -1,0 +1,5 @@
+<section class="section">
+    <input type="text" placeholder="Enter search query..." class="search-input" [(ngModel)]="searchText"
+        (ngModelChange)="onSearchTextChange($event)" />
+    <button class="btn" (click)="search()">Search</button>
+</section>

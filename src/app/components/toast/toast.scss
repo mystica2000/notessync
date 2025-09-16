@@ -1,0 +1,20 @@
+:host {
+  position: fixed;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+}
+
+span {
+  border: 1px solid #1976d2;
+  border-radius: 50px;
+  color: white;
+  padding-inline: 1em;
+  padding-block: 0.75em;
+  background: #2196f3;
+  border-radius: 50px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+}

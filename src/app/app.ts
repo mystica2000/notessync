@@ -1,6 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { VectorDbService } from './services/vector-db.service';
+import { InferenceService } from './services/inference.service';
+import { AppService } from './services/app.service';
 
 @Component({
   selector: 'app-root',
@@ -9,20 +10,26 @@ import { VectorDbService } from './services/vector-db.service';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('vector-embeddings-app');
 
-  addedRow: boolean = false;
+  @ViewChild('loaderContainer', { read: ViewContainerRef }) loaderVC!: ViewContainerRef;
 
-  vectorDB = inject(VectorDbService);
+  modelInference = inject(InferenceService);
+  appService = inject(AppService);
 
-  onAddNewRow() {
-    console.log("ADD NEW ROW");
-    this.addedRow = !this.addedRow;
-
-    this.vectorDB.initializeModel();
+  async ngAfterViewInit() {
+    this.appService.setContainer(this.loaderVC);
+    await this.initializeApp();
   }
 
-  addToVectorDB() {
-
+  private async initializeApp() {
+    this.appService.show();
+    try {
+      await this.appService.initializeVectorDB();
+      await this.modelInference.initModel();
+    } finally {
+      this.appService.hide();
+    }
   }
+
+
 }

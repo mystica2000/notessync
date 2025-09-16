@@ -1,0 +1,22 @@
+.abs-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+
+  svg {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.loader {
+  text-align: center;
+}
+
+.div-container {
+  svg {
+    width: 50px;
+    height: 100px;
+  }
+}
