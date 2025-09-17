@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { AutoModel, AutoTokenizer, env, FeatureExtractionPipeline, pipeline, PreTrainedModel, PreTrainedTokenizer } from '@huggingface/transformers';
+import { AutoModel, AutoTokenizer, env, PreTrainedModel, PreTrainedTokenizer } from '@huggingface/transformers';
 import { FilesystemCache } from '../helper-class/FilesystemCache';
 
 @Injectable({

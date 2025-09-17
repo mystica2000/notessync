@@ -1,9 +1,12 @@
 .abs-container {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 100%;
-
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   svg {
     width: 200px;
     height: 200px;
