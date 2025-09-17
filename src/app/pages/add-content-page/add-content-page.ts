@@ -40,7 +40,7 @@ export class AddContentPage {
       const currentContent = this.content().toString().trim();
       if (currentContent.length > 0) {
         this.disableButton.set(true);
-        const embeddings = await this.modelInference.generateEmbeddings(currentContent);
+        const embeddings = await this.modelInference.generateEmbeddings(currentContent, 'content');
         await VectorSqlite.insert({ content: currentContent, embedding: embeddings });
 
         await this.showToast("added successfully");

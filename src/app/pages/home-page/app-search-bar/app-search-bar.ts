@@ -18,7 +18,7 @@ export class AppSearchBar {
   @Output() resultsEmitter = new EventEmitter<ISearchResult[]>();
 
   async search() {
-    const embeddings = await this.modelInference.generateEmbeddings(this.searchText);
+    const embeddings = await this.modelInference.generateEmbeddings(this.searchText, 'search');
     const { data, count } = await VectorSqlite.query({ search: embeddings });
     this.resultsEmitter.emit(data);
   }

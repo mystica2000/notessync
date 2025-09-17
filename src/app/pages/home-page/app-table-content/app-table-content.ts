@@ -4,6 +4,7 @@ import { AppService } from '../../../services/app.service';
 import { BehaviorSubject, filter, Subscription, take } from 'rxjs';
 import { Loading } from "../../../components/loading/loading";
 import { VectorSqlite } from 'vector-sqlite-plugin';
+import { merge, mergeWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-table-content',
@@ -29,11 +30,14 @@ export class AppTableContent {
   async ngOnInit() {
 
     console.log("APP TABLE ");
-    this.dbSubscription = this.appService.isVectorDBInitialized
+    this.dbSubscription = (this.appService.isVectorDBInitialized
       .pipe(
         filter((isInitialized: boolean) => isInitialized === true), // Only when true
-        take(1) // Auto-unsubscribe after first true value
-      )
+        take(1), // Auto-unsubscribe after first true value,
+        mergeWith(this.appService.vectorDBRefreshSource.pipe(
+          filter(shouldRefresh => shouldRefresh === true)
+        ))
+      ))
       .subscribe(async () => {
         const { results, nextCursor, hasMore } = await VectorSqlite.getWithPagination({ limit: 10 })
         this.opt.next(results);

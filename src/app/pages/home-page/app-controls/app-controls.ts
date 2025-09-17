@@ -1,7 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, ComponentRef, inject, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { FileTransfer } from '@capacitor/file-transfer';
-import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Clipboard } from '@capacitor/clipboard';
+import { InferenceService } from '../../../services/inference.service';
+import { VectorSqlite } from 'vector-sqlite-plugin';
+import { Toast } from '../../../components/toast/toast';
+import { AppService } from '../../../services/app.service';
+
 
 @Component({
   selector: 'app-controls',
@@ -11,59 +15,48 @@ import { Directory, Filesystem } from '@capacitor/filesystem';
 })
 export class AppControls {
   private router = inject(Router);
+  private inference = inject(InferenceService);
+
+  private viewContainer = inject(ViewContainerRef);
+  private containerRef: ComponentRef<Toast> | null = null;
+
+  private appService = inject(AppService);
 
   addData() {
     this.router.navigate(['add-content']);
   }
-  addFromClipboard() { }
 
-  async downloadModel() {
+  importContent() { }
 
-    await Filesystem.mkdir({
-      path: "models/sentence-transformers/all-MiniLM-L6-v2/",
-      directory: Directory.Data,
-      recursive: true,
-    }).catch(() => { });
+  async addFromClipboard() {
+    const { type, value } = await Clipboard.read();
 
-    const url = `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/model_qint8_arm64.onnx`;
+    if (type == "text/plain" || type == "url") {
+      console.log(value);
 
-    const fileInfo = await Filesystem.getUri({
-      directory: Directory.Data,
-      path: 'models/sentence-transformers/all-MiniLM-L6-v2/model_qint8_arm64.onnx'
-    });
+      const embeddings = await this.inference.generateEmbeddings(value, 'content');
+      await VectorSqlite.insert({ content: value, embedding: embeddings });
+      this.appService.vectorDBRefreshSource.next(true);
+      await this.showToast("added successfully");
+    }
+  }
 
+  private showToast(data: string): Promise<void> {
+    if (this.containerRef) {
+      this.containerRef.destroy();
+    }
 
-    await FileTransfer.downloadFile({
-      url,
-      path: fileInfo.uri,
-    });
+    this.containerRef = this.viewContainer.createComponent<Toast>(Toast);
+    this.containerRef.instance.text = data;
 
-    const url1 = `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/`;
-
-    const opt = [
-      "config.json",
-      "tokenizer_config.json",
-      "tokenizer.json"
-    ]
-
-    opt.forEach(async (aOpt) => {
-      const fileInfo = await Filesystem.getUri({
-        directory: Directory.Data,
-        path: `models/sentence-transformers/all-MiniLM-L6-v2/${aOpt}`
-      });
-
-      let test = url1 + aOpt;
-
-      await FileTransfer.downloadFile({
-        url: test,
-        path: fileInfo.uri,
-      });
-
-    });
-
-
-    FileTransfer.addListener('progress', (progress) => {
-      console.log(`Downloaded ${progress.bytes} of ${progress.contentLength}`);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (this.containerRef) {
+          this.containerRef.destroy();
+          this.containerRef = null;
+        }
+        resolve();
+      }, 1000);
     });
   }
 }

@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { env, FeatureExtractionPipeline, pipeline } from '@huggingface/transformers';
+import { AutoModel, AutoTokenizer, env, FeatureExtractionPipeline, pipeline, PreTrainedModel, PreTrainedTokenizer } from '@huggingface/transformers';
 import { FilesystemCache } from '../helper-class/FilesystemCache';
 
 @Injectable({
@@ -8,8 +8,10 @@ import { FilesystemCache } from '../helper-class/FilesystemCache';
 })
 export class InferenceService {
 
-  #inference!: FeatureExtractionPipeline;
   private isInitialized = false;
+
+  tokenizer!: PreTrainedTokenizer;
+  model!: PreTrainedModel;
 
   constructor() {
     env.allowRemoteModels = true;     // ✅ Allow downloads initially
@@ -28,7 +30,12 @@ export class InferenceService {
 
   public async initModel() {
     try {
-      this.#inference = await pipeline<"feature-extraction">('feature-extraction', 'sentence-transformers/all-MiniLM-L6-v2', { device: 'auto', model_file_name: 'model_qint8_arm64' });
+
+      const model_id = "onnx-community/embeddinggemma-300m-ONNX";
+      this.tokenizer = await AutoTokenizer.from_pretrained(model_id);
+      this.model = await AutoModel.from_pretrained(model_id, {
+        dtype: "q8", // Options: "fp32" | "q8" | "q4"
+      });
 
       this.isInitialized = true;
     } catch (e) {
@@ -36,22 +43,27 @@ export class InferenceService {
     }
   }
 
-  public async generateEmbeddings(text: string) {
-    if (!this.isInitialized || !this.#inference) {
+  public async generateEmbeddings(text: string, type: 'search' | 'content') {
+    if (!this.isInitialized || !this.tokenizer || !this.model) {
       throw new Error('Model not initialized. Call initModel() first.');
     }
 
     try {
       console.log('🔮 Generating embeddings for:', text.substring(0, 50) + '...');
 
+      const prefixes = {
+        search: "task: search result | query: ",
+        content: "title: none | text: ",
+      };
+
+      const query = prefixes[type] + text;
+
       // Generate embeddings
-      const result = await this.#inference(text, {
-        pooling: 'mean',
-        normalize: true
-      });
+      const inputs = await this.tokenizer(query, { padding: true });
+      const { sentence_embedding } = await this.model(inputs);
 
       // Extract the embedding array
-      const embeddings = Array.from(result.data);
+      const embeddings = Array.from(sentence_embedding.data);
 
       console.log('✅ Generated embeddings:', embeddings.length, 'dimensions');
       return embeddings;

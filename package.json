@@ -30,6 +30,7 @@
     "@angular/router": "^20.2.0",
     "@capacitor-community/safe-area": "^7.0.0-alpha.1",
     "@capacitor/android": "^7.4.3",
+    "@capacitor/clipboard": "^7.0.2",
     "@capacitor/core": "^7.4.3",
     "@capacitor/file-transfer": "^1.0.5",
     "@capacitor/filesystem": "^7.1.4",

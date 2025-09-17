@@ -40,3 +40,50 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+
+
+# Compiled output
+plugins/vector-sqlite-plugin/dist
+plugins/vector-sqlite-plugin/tmp
+plugins/vector-sqlite-plugin/out-tsc
+plugins/vector-sqlite-plugin/bazel-out
+
+# Node
+plugins/vector-sqlite-plugin/node_modules
+plugins/vector-sqlite-pluginnpm-debug.log
+plugins/vector-sqlite-pluginyarn-error.log
+
+# IDEs and editors
+plugins/vector-sqlite-plugin.idea/
+plugins/vector-sqlite-plugin.project
+plugins/vector-sqlite-plugin.classpath
+plugins/vector-sqlite-plugin.c9/
+plugins/vector-sqlite-plugin*.launch
+plugins/vector-sqlite-plugin.settings/
+plugins/vector-sqlite-plugin*.sublime-workspace
+
+# Visual Studio Code
+plugins/vector-sqlite-plugin.vscode/*
+plugins/vector-sqlite-plugin!.vscode/settings.json
+plugins/vector-sqlite-plugin!.vscode/tasks.json
+plugins/vector-sqlite-plugin!.vscode/launch.json
+plugins/vector-sqlite-plugin!.vscode/extensions.json
+plugins/vector-sqlite-plugin.history/*
+
+# Miscellaneous
+plugins/vector-sqlite-plugin/.angular/cache
+plugins/vector-sqlite-plugin.sass-cache/
+plugins/vector-sqlite-plugin/connect.lock
+plugins/vector-sqlite-plugin/coverage
+plugins/vector-sqlite-plugin/libpeerconnection.log
+plugins/vector-sqlite-plugintestem.log
+plugins/vector-sqlite-plugin/typings
+
+# System files
+plugins/vector-sqlite-plugin/.DS_Store
+plugins/vector-sqlite-plugin/Thumbs.db
+
+# android
+plugins/vector-sqlite-plugin/android/.gradle
+plugins/vector-sqlite-plugin/android/build

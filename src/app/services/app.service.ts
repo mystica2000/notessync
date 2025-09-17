@@ -9,6 +9,8 @@ import { Loading } from '../components/loading/loading';
 export class AppService {
 
   isVectorDBInitialized = new BehaviorSubject<boolean>(false);
+  vectorDBRefreshSource = new BehaviorSubject<boolean>(false);
+
   private loaderRef?: ComponentRef<Loading>;
   private container?: ViewContainerRef;
   private counter = 0;
@@ -36,7 +38,6 @@ export class AppService {
         this.loaderRef = undefined;
       }
     }
-
   }
 
   public async initializeVectorDB() {
@@ -47,6 +48,10 @@ export class AppService {
       console.error('Vector DB initialization failed:', error);
       this.isVectorDBInitialized.next(false);
     }
+  }
+
+  public async refreshVectorDB() {
+
   }
 
   get isReady(): boolean {
