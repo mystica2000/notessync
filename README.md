@@ -110,3 +110,4 @@ Search "food ideas" to find notes about recipes, restaurants, cooking
 └── ...
 ```
 
+PS: i gave a talk on this project at a local meetup: slides available at https://github.com/mystica2000/slides/blob/main/ondevice.pdf
