@@ -17,12 +17,12 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Stack
 
-Frontend: Angular
-Mobile Framework: Capacitor
-AI/ML: Transformers.js with custom caching system
-Database: Custom SQLite plugin using io.requery library (using Capacitor Custom Plugin on `/plugins`)
-Vector Search: sqlite-vec extension for similarity search
-Platform: Android (using Android's built-in SQLite doesn't support extensions)
+- Frontend: Angular
+- Mobile Framework: Capacitor
+- Inference: Transformers.js with custom caching system
+- Database: Custom SQLite plugin using io.requery library (using Capacitor Custom Plugin on `/plugins`)
+- Vector Search: sqlite-vec extension for similarity search
+- Platform: Android (using Android's built-in SQLite doesn't support extensions)
 
 ## Installation
 
