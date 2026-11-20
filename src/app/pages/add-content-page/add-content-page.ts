@@ -1,11 +1,10 @@
-import { Component, ComponentRef, computed, inject, signal, ViewContainerRef } from '@angular/core';
-import { AppHeader } from "../../components/app-header/app-header";
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Location } from '@angular/common';
 import { VectorSqlite } from 'vector-sqlite-plugin';
-import { InferenceService } from '../../services/inference.service';
-import { Toast } from '../../components/toast/toast';
+import { AppHeader } from '../../components/app-header/app-header';
+import { OnnxInferenceService } from '../../services/onnx-inference.service';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-add-content',
@@ -20,7 +19,7 @@ export class AddContentPage {
     const currentContent = this.content();
     const remaining = 700 - currentContent.length;
     return remaining <= 50;
-  })
+  });
 
   getRemainingChars = computed(() => {
     const currentCount = this.content();
@@ -30,45 +29,38 @@ export class AddContentPage {
   disableButton = signal(false);
 
   location = inject(Location);
-  modelInference = inject(InferenceService);
-
-  private viewContainer = inject(ViewContainerRef);
-  private containerRef: ComponentRef<Toast> | null = null;
+  modelInference = inject(OnnxInferenceService);
+  private appService = inject(AppService);
 
   async onSubmit(form: any) {
-    if (form.valid) {
+    if (form.valid && !this.disableButton()) {
       const currentContent = this.content().toString().trim();
       if (currentContent.length > 0) {
         this.disableButton.set(true);
-        const embeddings = await this.modelInference.generateEmbeddings(currentContent, 'content');
-        await VectorSqlite.insert({ content: currentContent, embedding: embeddings });
-
-        await this.showToast("added successfully");
-        this.onBack();
-
+        try {
+          const embeddings = await this.modelInference.generateEmbeddings(currentContent, 'content');
+          await VectorSqlite.insert({ content: currentContent, embedding: embeddings });
+          this.appService.vectorDBRefreshSource.next(true);
+          this.appService.toast('Note added successfully');
+          this.onBack();
+        } catch (e) {
+          console.error('Save error:', e);
+          this.appService.toast('Failed to save note');
+          this.disableButton.set(false);
+        }
       } else {
-        this.content.set("");
+        this.content.set('');
       }
     }
   }
 
-  private showToast(data: string): Promise<void> {
-    if (this.containerRef) {
-      this.containerRef.destroy();
+  onKeyDown(event: KeyboardEvent, form: any) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      if (form.valid && !this.disableButton()) {
+        this.onSubmit(form);
+      }
     }
-
-    this.containerRef = this.viewContainer.createComponent<Toast>(Toast);
-    this.containerRef.instance.text = data;
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (this.containerRef) {
-          this.containerRef.destroy();
-          this.containerRef = null;
-        }
-        resolve();
-      }, 1000);
-    });
   }
 
   updateContent(event: any) {
@@ -76,6 +68,6 @@ export class AddContentPage {
   }
 
   onBack() {
-    this.location.back()
+    this.location.back();
   }
 }

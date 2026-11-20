@@ -2,16 +2,18 @@ import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { VectorSqlite } from 'vector-sqlite-plugin';
 import { Loading } from '../components/loading/loading';
+import { Toast } from '../components/toast/toast';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
-
   isVectorDBInitialized = new BehaviorSubject<boolean>(false);
   vectorDBRefreshSource = new BehaviorSubject<boolean>(false);
 
   private loaderRef?: ComponentRef<Loading>;
+  private toastRef?: ComponentRef<Toast>;
+  private toastTimer?: any;
   private container?: ViewContainerRef;
   private counter = 0;
 
@@ -32,12 +34,28 @@ export class AppService {
   hide() {
     this.counter = Math.max(0, this.counter - 1);
     if (this.counter === 0 && this.loaderRef) {
-
       if (this.loaderRef) {
         this.loaderRef.destroy();
         this.loaderRef = undefined;
       }
     }
+  }
+
+  toast(message: string, durationMs: number = 1800) {
+    if (!this.container) return;
+    if (this.toastRef) {
+      this.toastRef.destroy();
+      this.toastRef = undefined;
+      clearTimeout(this.toastTimer);
+    }
+    this.toastRef = this.container.createComponent<Toast>(Toast);
+    this.toastRef.instance.text = message;
+    this.toastTimer = setTimeout(() => {
+      if (this.toastRef) {
+        this.toastRef.destroy();
+        this.toastRef = undefined;
+      }
+    }, durationMs);
   }
 
   public async initializeVectorDB() {

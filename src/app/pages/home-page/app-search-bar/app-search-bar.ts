@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { VectorSqlite } from 'vector-sqlite-plugin';
-import { InferenceService } from '../../../services/inference.service';
+import { OnnxInferenceService } from '../../../services/onnx-inference.service';
 import { ISearchResult } from '../types';
 
 @Component({
@@ -12,19 +12,40 @@ import { ISearchResult } from '../types';
   styleUrl: './app-search-bar.scss'
 })
 export class AppSearchBar {
-  searchText: string = "";
-  modelInference = inject(InferenceService);
+  searchText: string = '';
+  isInputFocused: boolean = false;
+  isSearching = signal(false);
+
+  modelInference = inject(OnnxInferenceService);
 
   @Output() resultsEmitter = new EventEmitter<ISearchResult[]>();
 
   async search() {
-    const embeddings = await this.modelInference.generateEmbeddings(this.searchText, 'search');
-    const { data, count } = await VectorSqlite.query({ search: embeddings });
-    this.resultsEmitter.emit(data);
+    const query = this.searchText.trim();
+    if (!query) {
+      this.resultsEmitter.emit([]);
+      return;
+    }
+
+    try {
+      this.isSearching.set(true);
+      const embeddings = await this.modelInference.generateEmbeddings(query, 'search');
+      const { data } = await VectorSqlite.query({ search: embeddings });
+      this.resultsEmitter.emit(data || []);
+    } catch (e) {
+      console.error('Search error:', e);
+      this.resultsEmitter.emit([]);
+    } finally {
+      this.isSearching.set(false);
+    }
+  }
+
+  clearSearch() {
+    this.searchText = '';
+    this.resultsEmitter.emit([]);
   }
 
   onSearchTextChange(newValue: string) {
-    // Check if the input is cleared (i.e., the new value is an empty string)
     if (newValue === '') {
       this.resultsEmitter.emit([]);
     }
