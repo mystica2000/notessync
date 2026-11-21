@@ -1,6 +1,6 @@
 import { Component, inject, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { InferenceService } from './services/inference.service';
+import { OnnxInferenceService } from './services/onnx-inference.service';
 import { AppService } from './services/app.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class App {
 
   @ViewChild('loaderContainer', { read: ViewContainerRef }) loaderVC!: ViewContainerRef;
 
-  modelInference = inject(InferenceService);
+  modelInference = inject(OnnxInferenceService);
   appService = inject(AppService);
 
   async ngAfterViewInit() {

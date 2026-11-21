@@ -1,12 +1,21 @@
 <header class="header">
-
+  <div class="header-inner">
     @if (showBack()) {
-    <button class="back-btn" (click)="onBack()">
-        back
-    </button>
+      <button class="back-btn" (click)="onBack()" aria-label="Go back" title="Back">
+        <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span class="back-label">Back</span>
+      </button>
     }
 
-    <img src="assets/finallogo1.svg" class="img" />
+    <div class="brand-container">
+      <img src="assets/finallogo1.svg" alt="NotesSync" class="brand-logo" />
+      <span class="brand-tagline">On-Device Semantic Notes</span>
+    </div>
 
-    <p>Sync your notes for search later</p>
+    @if (showBack()) {
+      <div class="header-spacer"></div>
+    }
+  </div>
 </header>

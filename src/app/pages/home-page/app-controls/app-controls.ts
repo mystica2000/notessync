@@ -1,11 +1,10 @@
 import { Component, ComponentRef, inject, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@capacitor/clipboard';
-import { InferenceService } from '../../../services/inference.service';
+import { OnnxInferenceService } from '../../../services/onnx-inference.service';
 import { VectorSqlite } from 'vector-sqlite-plugin';
 import { Toast } from '../../../components/toast/toast';
 import { AppService } from '../../../services/app.service';
-
 
 @Component({
   selector: 'app-controls',
@@ -15,29 +14,35 @@ import { AppService } from '../../../services/app.service';
 })
 export class AppControls {
   private router = inject(Router);
-  private inference = inject(InferenceService);
-
+  private inference = inject(OnnxInferenceService);
   private viewContainer = inject(ViewContainerRef);
   private containerRef: ComponentRef<Toast> | null = null;
-
   private appService = inject(AppService);
 
   addData() {
     this.router.navigate(['add-content']);
   }
 
-  importContent() { }
+  importContent() {
+    this.showToast('Import feature coming soon');
+  }
 
   async addFromClipboard() {
-    const { type, value } = await Clipboard.read();
+    try {
+      const { type, value } = await Clipboard.read();
 
-    if (type == "text/plain" || type == "url") {
-      console.log(value);
-
-      const embeddings = await this.inference.generateEmbeddings(value, 'content');
-      await VectorSqlite.insert({ content: value, embedding: embeddings });
-      this.appService.vectorDBRefreshSource.next(true);
-      await this.showToast("added successfully");
+      if ((type === 'text/plain' || type === 'url') && value?.trim()) {
+        const trimmed = value.trim();
+        const embeddings = await this.inference.generateEmbeddings(trimmed, 'content');
+        await VectorSqlite.insert({ content: trimmed, embedding: embeddings });
+        this.appService.vectorDBRefreshSource.next(true);
+        await this.showToast('Note added from clipboard');
+      } else {
+        await this.showToast('No text found in clipboard');
+      }
+    } catch (e) {
+      console.warn('Clipboard read error:', e);
+      await this.showToast('Could not access clipboard');
     }
   }
 
@@ -56,7 +61,7 @@ export class AppControls {
           this.containerRef = null;
         }
         resolve();
-      }, 1000);
+      }, 1500);
     });
   }
 }

@@ -1,49 +1,63 @@
 <app-header [showBack]="true"></app-header>
 
-<main>
-    <form #contentForm="ngForm" (ngSubmit)="onSubmit(contentForm)" class="form-container">
+<main class="editor-main">
+  <form #contentForm="ngForm" (ngSubmit)="onSubmit(contentForm)" class="editor-form">
+    <div class="editor-card">
+      <div class="editor-header">
+        <h1 class="editor-title">Create Note</h1>
+        <p class="editor-subtitle">Your note will be saved locally with AI vector embeddings for semantic search.</p>
+      </div>
 
-        <div class="form-section">
-            <label for="content">Content</label>
-            <textarea id="content" name="content" [ngModel]="content()" (ngModelChange)="updateContent($event)"
-                [maxLength]="700" [minlength]="8" required placeholder="Enter your content here..."
-                #contentField="ngModel"></textarea>
+      <div class="textarea-wrapper">
+        <textarea
+          id="content"
+          name="content"
+          [ngModel]="content()"
+          (ngModelChange)="updateContent($event)"
+          (keydown)="onKeyDown($event, contentForm)"
+          [maxLength]="700"
+          [minlength]="8"
+          required
+          placeholder="What's on your mind? (e.g. Ideas, travel plans, recipes, work tasks)..."
+          class="note-textarea"
+          #contentField="ngModel"
+          autofocus
+        ></textarea>
+      </div>
 
-
-            <div class="field-footer">
-                @if(contentField.invalid && contentField.touched) {
-                <div class="validation-messages">
-                    @if (contentField.hasError('required')) {
-                    <small class="error">
-                        Content is required
-                    </small>
-                    }
-                </div>
-                } @else {
-                <div></div>
-                }
-
-                <div class="character-count">
-                    <span [class.warning]="isNearLimit()">
-                        {{content().length}} / 700
-                    </span>
-
-                    @if (getRemainingChars() > 0) {
-                    <span>
-                        ({{getRemainingChars()}} remaining)
-                    </span>
-                    }
-                </div>
-            </div>
-
-
+      <div class="editor-meta-bar">
+        <div class="validation-msg">
+          @if (contentField.invalid && contentField.touched) {
+            @if (contentField.hasError('required')) {
+              <span class="error-badge">Content is required</span>
+            } @else if (contentField.hasError('minlength')) {
+              <span class="error-badge">At least 8 characters needed</span>
+            }
+          }
         </div>
 
-        <div class="btn-group">
-            <button type="submit" [disabled]="contentForm.invalid || disableButton()">Add</button>
-            <button (click)="onBack()" [disabled]="disableButton">Cancel</button>
+        <div class="char-pill" [class.warning]="isNearLimit()" [class.danger]="getRemainingChars() === 0">
+          <span>{{ content().length }} / 700</span>
         </div>
-    </form>
+      </div>
+    </div>
 
+    <div class="action-footer">
+      <button type="button" class="btn btn-cancel" (click)="onBack()" [disabled]="disableButton()">
+        Cancel
+      </button>
 
+      <button type="submit" class="btn btn-save" [disabled]="contentForm.invalid || disableButton()">
+        @if (disableButton()) {
+          <span class="btn-spinner"></span>
+          <span>Vectorizing...</span>
+        } @else {
+          <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span>Save Note</span>
+        }
+      </button>
+    </div>
+  </form>
 </main>

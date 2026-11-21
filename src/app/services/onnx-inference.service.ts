@@ -6,7 +6,7 @@ import { FilesystemCache } from '../helper-class/FilesystemCache';
 @Injectable({
   providedIn: 'root'
 })
-export class InferenceService {
+export class OnnxInferenceService {
 
   private isInitialized = false;
 
@@ -26,15 +26,20 @@ export class InferenceService {
     if (env.backends.onnx.wasm) {
       env.backends.onnx.wasm.wasmPaths = '/assets/wasm/'
     }
+
+    if (env.backends.onnx.webgpu) {
+      env.backends.onnx.webgpu.profiling = { mode: 'default' };
+    }
   }
 
   public async initModel() {
     try {
 
-      const model_id = "onnx-community/embeddinggemma-300m-ONNX";
+      const model_id = "onnx-community/embeddinggemma-300m-ONNX"; 
       this.tokenizer = await AutoTokenizer.from_pretrained(model_id);
       this.model = await AutoModel.from_pretrained(model_id, {
         dtype: "q8", // Options: "fp32" | "q8" | "q4"
+        device: "wasm"
       });
 
       this.isInitialized = true;
